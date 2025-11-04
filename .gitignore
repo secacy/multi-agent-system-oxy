@@ -1,0 +1,8 @@
+data/
+outputs/
+logs/
+__pycache__/
+*.pyc
+cache_dir
+local_es_data/
+*.md
