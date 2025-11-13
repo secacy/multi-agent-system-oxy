@@ -1,18 +1,18 @@
 """
-MultimodalAgent (多模态分析智能体)
+MultimodalAgent (L1 - 多模态管理器)
 
-这是"感知"专家，负责理解所有非文本的像素、声音和扫描图像。
+这是一个管理型智能体。它不直接分析文件，只负责将其下属的专业子智能体暴露给 OrchestratorAgent。
 
-- 工具集：
-  - 图像识别 (CV) 模型 (`analyze_image`)。
-  - 音视频分析工具 (`analyze_video`, `analyze_audio`)。
-  - 光学字符识别 (OCR) (`ocr_image_or_pdf`)。
+- 工具集 (Sub-Agents)：
+  - image_agent (图像分析专家) - 待实现
+  - video_agent (视频分析专家) ✅
+  - audio_agent (音频分析专家) ✅
+  - ocr_agent (光学识别专家) - 待实现
 - 专业技能：
-  - 图像分析：如 `556a96c3...`（识别京东吉祥物）。
-  - 音视频分析：如 `e0d8203d...`（分析 `买iphone_副本.mp4`）或 `fddfe2fc...`（识别`大满贯.mp3`的歌词）。
-  - OCR：处理扫描版PDF（如 `22eb45c7...` 识别"人寿"字样 ）或图片中的文字（如 `0b2fa816...` 查看订单状态 ）。
+  - 任务路由 (Task Routing)：OrchestratorAgent 会将所有多模态任务发送给它。
+    它的唯一职责是分析 file_name（如 .mp4）和指令，然后将任务精确地转发给正确的 L2 子智能体。
 - 复现要求：
-  - 必须将分析的关键证据（如视频截图、OCR结果）以 `task_id` 命名，保存到 `local_es_data/` 目录。
+  - 在分派任务时，必须将 OrchestratorAgent 传来的 task_id 完整地传递给 L2 子智能体。
 """
 
 import os
@@ -20,16 +20,29 @@ from pathlib import Path
 from oxygent import oxy
 
 
-def create_multimodal_agent(llm_model: str = "default_llm") -> oxy.ReActAgent:
+def create_multimodal_agent(
+    llm_model: str = "default_llm",
+    sub_agents: list = None
+) -> oxy.ReActAgent:
     """
-    创建 MultimodalAgent 实例
+    创建 MultimodalAgent 实例（L1 路由型管理智能体）
     
     Args:
         llm_model: 使用的 LLM 模型名称
+        sub_agents: L2 子智能体列表
         
     Returns:
         配置好的 MultimodalAgent 实例
     """
+    # 默认子智能体列表
+    if sub_agents is None:
+        sub_agents = [
+            "audio_agent",
+            "video_agent",  # ✅ 已实现
+            # "image_agent",  # 待实现
+            # "ocr_agent",    # 待实现
+        ]
+    
     # 读取 multimodal.prompt 文件
     prompt_file = Path(__file__).parent.parent / "prompts" / "multimodal.prompt"
     
@@ -38,24 +51,25 @@ def create_multimodal_agent(llm_model: str = "default_llm") -> oxy.ReActAgent:
             multimodal_prompt = f.read()
     else:
         print(f"⚠️  警告: 未找到 multimodal.prompt 文件，路径: {prompt_file}")
-        multimodal_prompt = "你是一个 multimodal_agent，负责多模态内容分析。"
+        multimodal_prompt = "你是一个 multimodal_agent (L1)，负责路由多模态任务到子智能体。"
     
-    # 创建 MultimodalAgent
+    # 创建 MultimodalAgent（L1 管理器）
     agent = oxy.ReActAgent(
         name="multimodal_agent",
         desc=(
-            "Multimodal analysis specialist. Expert in image recognition, video analysis, "
-            "audio transcription, and OCR. Can analyze .png, .jpg, .mp4, .mp3 files and "
-            "perform optical character recognition on images and PDFs. "
-            "Uses analyze_image, analyze_video, analyze_audio, and ocr_image_or_pdf tools."
+            "Multimodal router agent (L1). Routes multimodal tasks to specialized L2 agents. "
+            "Analyzes file_name (.mp3, .mp4, .jpg, .pdf) and forwards tasks to "
+            "audio_agent (for .mp3/.wav), video_agent (for .mp4/.avi), "
+            "image_agent (for .jpg/.png), or ocr_agent (for text extraction)."
         ),
-        tools=["multimodal_tools"],
+        sub_agents=sub_agents,  # L2 子智能体
+        tools=[],  # L1 不直接使用工具，只路由
         llm_model=llm_model,
         prompt=multimodal_prompt,
-        max_react_rounds=10,  # 最大 ReAct 轮数
-        timeout=300,  # 超时时间（秒）
-        multimedia_supported=True,  # 支持多模态
-        trust_mode=True,  # Agent 直接返回工具的原始输出
+        max_react_rounds=5,  # 路由不需要多轮
+        timeout=300,
+        multimedia_supported=True,
+        trust_mode=True,  # 直接返回子智能体的输出
     )
     
     return agent

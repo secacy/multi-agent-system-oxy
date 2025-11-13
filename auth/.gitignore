@@ -1,0 +1,10 @@
+# 忽略所有认证状态文件
+# 这些文件包含敏感的登录凭证（Cookies + LocalStorage）
+# 请勿将它们提交到 git 仓库
+
+# 忽略所有 JSON 文件（认证状态文件）
+*.json
+
+# 允许提交 README 文件
+!README.md
+

@@ -1,0 +1,68 @@
+# code agent tools
+oxygent
+pandas
+openpyxl 
+python-pptx 
+pyarrow 
+pydantic
+tenacity
+huggingface_hub
+datasets
+
+# search tools
+requests
+beautifulsoup4  # HTML parsing for web scraping
+sentence-transformers # pdf search embedding
+
+# ocr agent tools
+PyMuPDF
+
+# browser tools
+playwright
+cloudscraper
+
+# audio tools
+faster-whisper  # 转录歌词
+
+# demuscs 依赖
+demucs  # 分离曲目
+diffq>=0.2
+dora-search
+einops
+hydra-colorlog>=1.1
+hydra-core>=1.1
+julius>=0.2.3
+lameenc>=1.2
+openunmix
+musdb>=0.4.0
+museval>=0.4.0
+soundfile
+submitit
+treetable>=0.2.3
+
+
+## other tools
+## pptx tools
+python-pptx==0.6.21 
+
+## pdf tools
+pytesseract==0.3.10
+pdfplumber==0.9.0
+
+## video tools
+moviepy
+opencv-python 
+opencv-contrib-python
+ffmpeg-python
+numpy
+paddleocr
+paddlepaddle
+## 对象检测依赖
+# 根据你的 CUDA 版本选择
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+
+# 代理
+httpx[socks]

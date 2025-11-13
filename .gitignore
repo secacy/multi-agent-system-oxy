@@ -6,3 +6,5 @@ __pycache__/
 cache_dir
 local_es_data/
 *.md
+GroundingDINO/.env
+.env

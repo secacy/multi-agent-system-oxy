@@ -1,0 +1,92 @@
+# VideoAgent 依赖包
+# 这个文件列出了 VideoAgent 及其工具包所需的所有 Python 依赖
+
+# ==================== 基础依赖（必需）====================
+
+# OpenCV - 视频处理和帧提取
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0
+
+# FFmpeg Python 绑定 - 视频元数据和音频提取
+ffmpeg-python>=0.2.0
+
+# NumPy - 数值计算和数组操作
+numpy>=1.24.0
+
+# Requests - HTTP 请求（用于 VLM API 调用）
+requests>=2.31.0
+
+# ==================== ASR 依赖（推荐）====================
+
+# Faster Whisper - 高性能语音识别
+# 首次运行会自动下载模型（~3GB）
+faster-whisper>=0.10.0
+
+# ==================== OCR 依赖（推荐）====================
+
+# PaddleOCR - 场景文本识别
+paddleocr>=2.7.0
+
+# PaddlePaddle - PaddleOCR 的后端
+# CPU 版本（如果有 GPU，请安装 GPU 版本）
+paddlepaddle>=2.5.0
+
+# ==================== 深度学习依赖（可选）====================
+
+# PyTorch - GroundingDINO 的依赖
+# 注意：请根据你的 CUDA 版本选择合适的安装命令
+# CPU 版本：
+# torch>=2.0.0
+# torchvision>=0.15.0
+
+# GPU 版本（CUDA 11.8）：
+# 运行: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+# ==================== GroundingDINO（可选 - 高级对象检测）====================
+
+# GroundingDINO 需要从源码安装，无法通过 pip 直接安装
+# 请参考 VIDEO_AGENT_SETUP.md 中的安装说明
+
+# 依赖项（如果安装 GroundingDINO）：
+# transformers>=4.30.0
+# supervision>=0.18.0
+
+# ==================== 其他工具依赖 ====================
+
+# Pillow - 图像处理
+Pillow>=10.0.0
+
+# tqdm - 进度条（用于长时间处理）
+tqdm>=4.65.0
+
+# ==================== 安装说明 ====================
+
+# 最小化安装（快速测试）：
+#   pip install -r requirements_video.txt --no-deps
+#   pip install opencv-python ffmpeg-python numpy requests
+
+# 推荐安装（完整功能）：
+#   pip install -r requirements_video.txt
+
+# 完整安装（包括深度学习）：
+#   pip install -r requirements_video.txt
+#   pip install torch torchvision
+#   # 然后手动安装 GroundingDINO（见文档）
+
+# ==================== 系统依赖 ====================
+
+# FFmpeg（必需 - 系统级）
+# Ubuntu/Debian: sudo apt install ffmpeg
+# macOS: brew install ffmpeg
+# Windows: 从 https://ffmpeg.org/download.html 下载
+
+# ==================== 环境变量 ====================
+
+# VLM API（用于 analyze_video_flow 工具）
+# export DEFAULT_VLM_API_KEY='your_api_key'
+# export DEFAULT_VLM_BASE_URL='your_base_url'
+# export DEFAULT_VLM_MODEL_NAME='qwen-vl-plus'
+
+# HuggingFace 镜像（可选 - 加速模型下载）
+# export HF_ENDPOINT='https://hf-mirror.com'
+
